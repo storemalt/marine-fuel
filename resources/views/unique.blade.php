@@ -9,39 +9,27 @@
       <div class="col-md-8">
         <div class="card">
           <div class="card-header">
-            <h5 class="card-title">Most Frequently Occurring Elements</h5>
+            <h5 class="card-title">Unique String</h5>
           </div>
           <div class="card-body">
             <form method="post" action="{{$action}}">
               {{ csrf_field() }}
               <div class="form-group">
-                <label for="array_values">Input Array of comma separated values
-                  <code>[4, 3, 2, 4, 3, 4]</code>
+                <label for="array_values">Input a set of random repeating characters
+                  <code>'aaaabbbbbcccccdde'</code>
                 </label>
                 <input
                   type="text"
                   class="form-control"
-                  id="array_values"
-                  name="array_values"
-                  value="{{ old('array_values') }}"
-                  aria-describedby="array_values"
-                  placeholder="1,2,3,4,3,5,5">
+                  id="word"
+                  name="word"
+                  value="{{ old('word') }}"
+                  aria-describedby="word"
+                  placeholder="aaaabbbbbcccccdde">
                 <small id="emailHelp" class="form-text text-muted">
                   Do not leave blank values with commas, no comma
                   before and after the last and first number
                 </small>
-              </div>
-
-              <div class="form-group">
-                <label for="number_occurrences">
-                  Number of elements to be shown that belongs to the top list of
-                  occurrences.</label>
-                <input type="text"
-                       class="form-control"
-                       id="number_occurrences"
-                       name="number_occurrences"
-                       value="{{ old('number_occurrences') }}"
-                       placeholder="Any number not greater than number of array elements eg: 1">
               </div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>

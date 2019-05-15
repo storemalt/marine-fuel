@@ -85,13 +85,10 @@
                 </div>
 
                 <div class="links">
-                    <a href="{{ @route('home') }}">Frequency</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                    <a href="{{ @route('home.occurrence') }}">Frequency</a>
+                    <a href="{{ @route('home.unique.string') }}">Unique String</a>
+                    <a href="{{ @route('home.pinpoint.map') }}">Pinpoint Mapping</a>
+                    <a href="https://github.com/storemalt/marine-fuel">GitHub Repository</a>
                 </div>
             </div>
         </div>

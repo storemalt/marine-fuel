@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\StringHelper;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -24,13 +26,10 @@ class HomeController extends Controller
      *
      * @return View
      */
-    public function index()
+    public function index(): View
     {
-        $topElements = [];
-
         return view('home', [
-            'topElements' => implode(',',$topElements),
-            'action'=>action('HomeController@occurrence')
+            'action' => action('HomeController@occurrence')
         ]);
     }
 
@@ -38,9 +37,9 @@ class HomeController extends Controller
      * Checks for number of occurrence in a given array of values
      *
      * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function occurrence(Request $request)
+    public function occurrence(Request $request): RedirectResponse
     {
         $request->validate([
             'array_values' => 'required',
@@ -52,14 +51,74 @@ class HomeController extends Controller
             $numberOccurrences = 0;
         }
 
-        $strippedCommas = trim($request->array_values, ',');
-        $arrayConverted = explode(',',$strippedCommas);
-        $occurrences = array_count_values($arrayConverted);
-        arsort($occurrences, SORT_NUMERIC);
-        $topOccurrences = array_slice($occurrences, 0, $numberOccurrences, true);
-        $keys = array_keys($topOccurrences);
-        $answer = implode(', ', $keys);
-        $message = 'The top ' .  $numberOccurrences . ' occurrence(s): ' . $answer;
-        return redirect()->route('home')->with('success', $message);
+        $answer = StringHelper::numberOccurrence(
+            $request->array_values,
+            $request->number_occurrences
+        );
+        $message = 'The top ' . $numberOccurrences . ' occurrence(s): ' . $answer;
+
+        return redirect()->route('home.occurrence')->with('success', $message);
+    }
+
+    /**
+     * You have a string of characters. Write a function to find and return the length of the substring
+     * which is the longest with unique. I.e. non-repeating characters. For your answer, we will need
+     * the function codes, output based on the following input and a short description of what you are
+     * trying to achieve.
+     *
+     * @return View
+     */
+    public function uniqueString()
+    {
+        return view('unique', [
+            'action' => action('HomeController@unique')
+        ]);
+    }
+
+    /**
+     * Retrieves the unique string from a given string
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function unique(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'word' => 'required',
+        ]);
+
+        $uniqueWord = StringHelper::longestUniqueString($request->word);
+        $message = 'The longest unique string is ' . $uniqueWord;
+
+        return redirect()->route('home.unique.string')->with('success', $message);
+    }
+
+    /**
+     * Generates a map that pinpoints location of user who viewed the page
+     *
+     * @return View
+     */
+    public function pinPointMapping()
+    {
+        return view('pinpoint-map', [
+            'action' => action('HomeController@storeLocation')
+        ]);
+    }
+
+    /**
+     * Stores the location of the user who viewed the pinpoint location page
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function storeLocation(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'location' => 'required',
+        ]);
+
+        //store in json file location
+
+        return redirect()->route('home.unique.string')->with('success', 'Successfully saved the location.');
     }
 }
