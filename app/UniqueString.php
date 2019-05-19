@@ -16,9 +16,14 @@ class UniqueString implements SolutionInterface
         $this->request = $request;
     }
 
+    /**
+     * Retrieves the unique combination of characters from any given string value
+     * @return string
+     */
     public function process(): string
     {
-        $uniqueWord = StringHelper::longestUniqueString($this->request->word);
+        $stringHelper = new StringHelper();
+        $uniqueWord = $stringHelper->longestUniqueString($this->request->word);
 
         return $uniqueWord;
     }

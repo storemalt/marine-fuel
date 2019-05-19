@@ -26,6 +26,11 @@
                   value="{{ old('array_values') }}"
                   aria-describedby="array_values"
                   placeholder="1,2,3,4,3,5,5">
+
+                @error('array_values')
+                  <div class="text-danger">{{ $message }}</div>
+                @enderror
+
                 <small id="emailHelp" class="form-text text-muted">
                   Do not leave blank values with commas, no comma
                   before and after the last and first number
@@ -42,6 +47,11 @@
                        name="number_occurrences"
                        value="{{ old('number_occurrences') }}"
                        placeholder="Any number not greater than number of array elements eg: 1">
+
+                @error('number_occurrences')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
+
               </div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>
