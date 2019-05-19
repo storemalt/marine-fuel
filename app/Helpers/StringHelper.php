@@ -5,11 +5,6 @@ namespace App\Helpers;
 
 class StringHelper
 {
-    /**
-     *
-     * @param string $word
-     * @return string unique string
-     */
     public function longestUniqueString(string $word): string
     {
         return count_chars($word, 3);
