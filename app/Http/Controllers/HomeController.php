@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Helpers\NumberHelper;
 use App\Helpers\StringHelper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -51,7 +53,7 @@ class HomeController extends Controller
             $numberOccurrences = 0;
         }
 
-        $answer = StringHelper::numberOccurrence(
+        $answer = NumberHelper::numberOccurrence(
             $request->array_values,
             $request->number_occurrences
         );
