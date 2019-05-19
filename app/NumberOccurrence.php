@@ -1,22 +1,31 @@
 <?php
-
+declare(strict_types=1);
 
 namespace App;
 
-
-use App\Helpers\NumberHelper;
+use App\Helpers\StringHelper;
 use App\Interfaces\SolutionInterface;
 use Illuminate\Http\Request;
 
 class NumberOccurrence implements SolutionInterface
 {
-    public function process(Request $request): string
+    private $request;
+
+    public function __construct(Request $request)
     {
-        $numberOccurrences = $request->number_occurrences;
-        $arrayValues = $request->array_values;
-        $answer = NumberHelper::numberOccurrence(
-            $arrayValues,
-            $numberOccurrences
+        $this->request = $request;
+    }
+
+    /**
+     * Handles the number occurrence process
+     * @return string comma separated values of elements with re-occurrence
+     */
+    public function process(): string
+    {
+        $stringHelper = new StringHelper();
+        $answer = $stringHelper->occurrence(
+            $this->request->array_values,
+            intval($this->request->number_occurrences)
         );
 
         return $answer;

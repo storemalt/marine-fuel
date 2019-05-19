@@ -6,6 +6,6 @@ use Illuminate\Http\Request;
 
 interface ExecuteInterface
 {
-    public function __construct(SolutionInterface $solution, Request $request);
+    public function __construct(SolutionInterface $solution);
     public function execute();
 }

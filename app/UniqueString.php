@@ -9,9 +9,16 @@ use Illuminate\Http\Request;
 
 class UniqueString implements SolutionInterface
 {
-    public function process(Request $request): string
+    private $request;
+
+    public function __construct(Request $request)
     {
-        $uniqueWord = StringHelper::longestUniqueString($request->word);
+        $this->request = $request;
+    }
+
+    public function process(): string
+    {
+        $uniqueWord = StringHelper::longestUniqueString($this->request->word);
 
         return $uniqueWord;
     }

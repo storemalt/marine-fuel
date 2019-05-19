@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Helpers\StringHelper;
-use App\Helpers\NumberHelper;
 use App\NumberOccurrence;
 use App\Solution;
 use App\UniqueString;
@@ -51,8 +49,8 @@ class HomeController extends Controller
             'number_occurrences' => 'required|integer',
         ]);
 
-        $numberOccurrence = new NumberOccurrence();
-        $solution = new Solution($numberOccurrence, $request);
+        $numberOccurrence = new NumberOccurrence($request);
+        $solution = new Solution($numberOccurrence);
         $answer = $solution->execute();
 
         $requiredResults = ($request->number_occurrences < 1) ? 1 : $request->number_occurrences;
@@ -88,8 +86,8 @@ class HomeController extends Controller
             'word' => 'required',
         ]);
 
-        $uniqueString = new UniqueString();
-        $solution = new Solution($uniqueString, $request);
+        $uniqueString = new UniqueString($request);
+        $solution = new Solution($uniqueString);
         $answer = $solution->execute();
 
         $message = 'The longest unique string is ' . $answer;
