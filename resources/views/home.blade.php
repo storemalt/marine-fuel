@@ -9,7 +9,7 @@
       <div class="col-md-8">
         <div class="card">
           <div class="card-header">
-            <h5 class="card-title">Most Frequently Occurring Elements</h5>
+            <h5 class="card-title">Frequently Occurring Elements</h5>
           </div>
           <div class="card-body">
             <form method="post" action="{{$action}}">

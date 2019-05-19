@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Helpers\NumberHelper;
 use App\Helpers\StringHelper;
+use App\Helpers\NumberHelper;
+use App\NumberOccurrence;
+use App\Solution;
+use App\UniqueString;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -48,16 +51,12 @@ class HomeController extends Controller
             'number_occurrences' => 'required|integer',
         ]);
 
-        $numberOccurrences = $request->number_occurrences;
-        if ($numberOccurrences < 1) {
-            $numberOccurrences = 0;
-        }
+        $numberOccurrence = new NumberOccurrence();
+        $solution = new Solution($numberOccurrence, $request);
+        $answer = $solution->execute();
 
-        $answer = NumberHelper::numberOccurrence(
-            $request->array_values,
-            $request->number_occurrences
-        );
-        $message = 'The top ' . $numberOccurrences . ' occurrence(s): ' . $answer;
+        $requiredResults = ($request->number_occurrences < 1) ? 1 : $request->number_occurrences;
+        $message = 'The top ' . $requiredResults . ' occurrence(s): ' . $answer;
 
         return redirect()->route('home.occurrence')->with('success', $message);
     }
@@ -70,7 +69,7 @@ class HomeController extends Controller
      *
      * @return View
      */
-    public function uniqueString()
+    public function uniqueString(): View
     {
         return view('unique', [
             'action' => action('HomeController@unique')
@@ -89,8 +88,11 @@ class HomeController extends Controller
             'word' => 'required',
         ]);
 
-        $uniqueWord = StringHelper::longestUniqueString($request->word);
-        $message = 'The longest unique string is ' . $uniqueWord;
+        $uniqueString = new UniqueString();
+        $solution = new Solution($uniqueString, $request);
+        $answer = $solution->execute();
+
+        $message = 'The longest unique string is ' . $answer;
 
         return redirect()->route('home.unique.string')->with('success', $message);
     }
@@ -100,7 +102,7 @@ class HomeController extends Controller
      *
      * @return View
      */
-    public function pinPointMapping()
+    public function pinPointMapping(): View
     {
         return view('pinpoint-map', [
             'action' => action('HomeController@storeLocation')
