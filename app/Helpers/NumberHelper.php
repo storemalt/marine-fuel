@@ -15,6 +15,11 @@ class NumberHelper
      */
     public static function numberOccurrence(string $numberString, int $numberOccurrences = 1): string
     {
+        // ensure that number occurrence required is always 1
+        if ($numberOccurrences < 1) {
+            $numberOccurrences = 1;
+        }
+
         $strippedCommas = trim($numberString, ',');
         $removedSpaces = preg_replace('/\s+/', '', $strippedCommas);
         $arrayConverted = explode(',', $removedSpaces);
