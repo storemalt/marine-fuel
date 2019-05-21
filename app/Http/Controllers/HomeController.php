@@ -6,8 +6,10 @@ namespace App\Http\Controllers;
 use App\NumberOccurrence;
 use App\Solution;
 use App\UniqueString;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -102,13 +104,25 @@ class HomeController extends Controller
      */
     public function pinPointMapping(): View
     {
+        $locations = $this->getCache();
+        if (empty($locations)) {
+            $locations[] = [
+                "lat" => 3.108864,
+                "lng" => 101.58735360000001,
+                "label" =>"Ship 0"
+            ];
+            $locations = json_encode($locations);
+        }
+
         return view('pinpoint-map', [
-            'action' => action('HomeController@storeLocation')
+            'action' => action('HomeController@storeLocation'),
+            'locations' => $locations,
         ]);
     }
 
     /**
      * Stores the location of the user who viewed the pinpoint location page
+     * caching would require a cron job on the server or a data store engine like redis or memcached
      *
      * @param Request $request
      * @return RedirectResponse
@@ -116,11 +130,39 @@ class HomeController extends Controller
     public function storeLocation(Request $request): RedirectResponse
     {
         $request->validate([
-            'location' => 'required',
+            'current_location' => 'required',
+            'location_name' => 'required',
+            'duration' => 'required|integer',
         ]);
 
-        //store in json file location
+        if ($request->has('_token')) {
+            $data = json_decode($request->current_location, true);
+            $data['label'] = $request->location_name;
+            $expirationHours = intval($request->duration);
 
-        return redirect()->route('home.unique.string')->with('success', 'Successfully saved the location.');
+            // cache deletion would require a cron job on the server or using a (nosql) data store engine
+            // temporarily saved in a file storage
+            if (Cache::has('locations')) {
+                $locations = $this->getCache();
+                $locations[] = $data;
+                $this->putCache(json_encode($locations), now()->addHours($expirationHours));
+
+            } else {
+                $locations[] = $data;
+                $this->putCache(json_encode($locations), now()->addHours($expirationHours));
+            }
+        }
+
+        return redirect()->route('home.pinpoint.map')->with('success', 'Successfully saved the location.');
+    }
+
+    public function getCache(string $key = 'locations')
+    {
+        return Cache::get($key);
+    }
+
+    public function putCache(string $locations, Carbon $expirationHours, string $key = 'locations')
+    {
+        return Cache::put($key, $locations, $expirationHours);
     }
 }
