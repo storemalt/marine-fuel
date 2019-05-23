@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\FileCache;
 use App\NumberOccurrence;
 use App\Solution;
 use App\UniqueString;
-use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -14,6 +14,8 @@ use Illuminate\View\View;
 
 class HomeController extends Controller
 {
+    private $fileCache;
+
     /**
      * Create a new controller instance.
      *
@@ -22,6 +24,7 @@ class HomeController extends Controller
     public function __construct()
     {
         //$this->middleware('auth');
+        $this->fileCache = new FileCache();
     }
 
     /**
@@ -104,15 +107,10 @@ class HomeController extends Controller
      */
     public function pinPointMapping(): View
     {
-        $locations = $this->getCache();
-        if (empty($locations)) {
-            $locations[] = [
-                "lat" => 3.108864,
-                "lng" => 101.58735360000001,
-                "label" =>"Ship 0"
-            ];
-            $locations = json_encode($locations);
-        }
+        // cache deletion would require a cron job on the server or using a (nosql) data store engine
+        // for now we will be using synchronous blocking I/O operation
+        // returns also the json locations data
+        $locations = $this->fileCache->deleteExpiredCache();
 
         return view('pinpoint-map', [
             'action' => action('HomeController@storeLocation'),
@@ -135,34 +133,8 @@ class HomeController extends Controller
             'duration' => 'required|integer',
         ]);
 
-        if ($request->has('_token')) {
-            $data = json_decode($request->current_location, true);
-            $data['label'] = $request->location_name;
-            $expirationHours = intval($request->duration);
-
-            // cache deletion would require a cron job on the server or using a (nosql) data store engine
-            // temporarily saved in a file storage
-            if (Cache::has('locations')) {
-                $locations = $this->getCache();
-                $locations[] = $data;
-                $this->putCache(json_encode($locations), now()->addHours($expirationHours));
-
-            } else {
-                $locations[] = $data;
-                $this->putCache(json_encode($locations), now()->addHours($expirationHours));
-            }
-        }
+        $this->fileCache->setCacheData($request);
 
         return redirect()->route('home.pinpoint.map')->with('success', 'Successfully saved the location.');
-    }
-
-    public function getCache(string $key = 'locations')
-    {
-        return Cache::get($key);
-    }
-
-    public function putCache(string $locations, Carbon $expirationHours, string $key = 'locations')
-    {
-        return Cache::put($key, $locations, $expirationHours);
     }
 }

@@ -45,7 +45,7 @@
                value="{{ old('duration') }}"
                required>
         @error('duration')
-          <div class="text-danger">{{ $message }}</div>
+        <div class="text-danger">{{ $message }}</div>
         @enderror
         <small id="durationHelp" class="form-text text-muted">
           Determines how many hours we will save location information
@@ -70,39 +70,6 @@
     // retrieved stored locations from cache
     const storedLocations = document.getElementById('stored_locations');
     let locations = JSON.parse(storedLocations.value);
-    console.log(locations);
-
-//    var locations = [
-//      {
-//        label: 'test1',
-//        lat: 1.2816108,
-//        lng: 103.8818392,
-//      },
-//      { lat: 1.2827198, lng: 103.8823256, label: 'test2' },
-//      { lat: 1.2837072, lng: 103.8824288, label: 'test3' },
-//      { lat: 1.2682561, lng: 103.8625758, label: 'test4' },
-//      { lat: 1.2682561, lng: 103.8625758 },
-//      { lat: 1.2619037, lng: 103.8461269 },
-//      { lat: 1.2619037, lng: 103.8461269 },
-//      { lat: 1.2688303, lng: 103.7757082 },
-//      { lat: 1.2688303, lng: 103.7757082 },
-//      { lat: 1.2688303, lng: 103.7757082 },
-//      { lat: 1.2688303, lng: 103.7757082 },
-//      { lat: -37.765015, lng: 145.133858 },
-//      { lat: -37.770104, lng: 145.143299 },
-//      { lat: -37.773700, lng: 145.145187 },
-//      { lat: -37.774785, lng: 145.137978 },
-//      { lat: -37.819616, lng: 144.968119 },
-//      { lat: -38.330766, lng: 144.695692 },
-//      { lat: -39.927193, lng: 175.053218 },
-//      { lat: -41.330162, lng: 174.865694 },
-//      { lat: -42.734358, lng: 147.439506 },
-//      { lat: -42.734358, lng: 147.501315 },
-//      { lat: -42.735258, lng: 147.438000 },
-//      { lat: -43.999792, lng: 170.463352 },
-//    ];
-    //    console.log(locations);
-    //    debugger;
 
     function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
@@ -110,27 +77,25 @@
         zoom: 6,
       });
 
-      // Create an array of alphabetical characters used to label the markers.
-      var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-      // Add some markers to the map.
-      // Note: The code uses the JavaScript Array.prototype.map() method to
-      // create an array of markers based on a given "locations" array.
-      // The map() method here has nothing to do with the Google Maps API.
-      var markers = locations.map(function (location, i) {
-        return new google.maps.Marker({
-          position: location,
-//          label: labels[i % labels.length],
-          label: location.label,
+      if (locations.length > 0) {
+        // Add some markers to the map.
+        // Note: The code uses the JavaScript Array.prototype.map() method to
+        // create an array of markers based on a given "locations" array.
+        // The map() method here has nothing to do with the Google Maps API.
+        var markers = locations.map(function (location, i) {
+          return new google.maps.Marker({
+            position: location,
+            label: location.label,
+          });
         });
-      });
 
-      // Add a marker clusterer to manage the markers.
-      var markerCluster = new MarkerClusterer(
-        map,
-        markers,
-        { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' },
-      );
+        // Add a marker Cluster to manage the markers.
+        var markerCluster = new MarkerClusterer(
+          map,
+          markers,
+          { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' },
+        );
+      }
 
       infoWindow = new google.maps.InfoWindow;
 
@@ -158,14 +123,14 @@
         // Browser doesn't support Geolocation
         handleLocationError(false, infoWindow, map.getCenter());
       }
-    }
 
-    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-      infoWindow.setPosition(pos);
-      infoWindow.setContent(browserHasGeolocation ?
-        'Error: The Geolocation service failed.' :
-        'Error: Your browser doesn\'t support geolocation.');
-      infoWindow.open(map);
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+          'Error: The Geolocation service failed.' :
+          'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
     }
   </script>
   <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
