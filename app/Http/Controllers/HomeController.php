@@ -1,14 +1,21 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Helpers\StringHelper;
+use App\FileCache;
+use App\NumberOccurrence;
+use App\Solution;
+use App\UniqueString;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
+    private $fileCache;
+
     /**
      * Create a new controller instance.
      *
@@ -17,6 +24,7 @@ class HomeController extends Controller
     public function __construct()
     {
         //$this->middleware('auth');
+        $this->fileCache = new FileCache();
     }
 
     /**
@@ -46,16 +54,12 @@ class HomeController extends Controller
             'number_occurrences' => 'required|integer',
         ]);
 
-        $numberOccurrences = $request->number_occurrences;
-        if ($numberOccurrences < 1) {
-            $numberOccurrences = 0;
-        }
+        $numberOccurrence = new NumberOccurrence($request);
+        $solution = new Solution($numberOccurrence);
+        $answer = $solution->execute();
 
-        $answer = StringHelper::numberOccurrence(
-            $request->array_values,
-            $request->number_occurrences
-        );
-        $message = 'The top ' . $numberOccurrences . ' occurrence(s): ' . $answer;
+        $requiredResults = ($request->number_occurrences < 1) ? 1 : $request->number_occurrences;
+        $message = 'The top ' . $requiredResults . ' occurrence(s): ' . $answer;
 
         return redirect()->route('home.occurrence')->with('success', $message);
     }
@@ -68,7 +72,7 @@ class HomeController extends Controller
      *
      * @return View
      */
-    public function uniqueString()
+    public function uniqueString(): View
     {
         return view('unique', [
             'action' => action('HomeController@unique')
@@ -87,8 +91,11 @@ class HomeController extends Controller
             'word' => 'required',
         ]);
 
-        $uniqueWord = StringHelper::longestUniqueString($request->word);
-        $message = 'The longest unique string is ' . $uniqueWord;
+        $uniqueString = new UniqueString($request);
+        $solution = new Solution($uniqueString);
+        $answer = $solution->execute();
+
+        $message = 'The longest unique string is ' . $answer;
 
         return redirect()->route('home.unique.string')->with('success', $message);
     }
@@ -98,15 +105,22 @@ class HomeController extends Controller
      *
      * @return View
      */
-    public function pinPointMapping()
+    public function pinPointMapping(): View
     {
+        // cache deletion would require a cron job on the server or using a (nosql) data store engine
+        // for now we will be using synchronous blocking I/O operation
+        // returns also the json locations data
+        $locations = $this->fileCache->deleteExpiredCache();
+
         return view('pinpoint-map', [
-            'action' => action('HomeController@storeLocation')
+            'action' => action('HomeController@storeLocation'),
+            'locations' => $locations,
         ]);
     }
 
     /**
      * Stores the location of the user who viewed the pinpoint location page
+     * caching would require a cron job on the server or a data store engine like redis or memcached
      *
      * @param Request $request
      * @return RedirectResponse
@@ -114,11 +128,13 @@ class HomeController extends Controller
     public function storeLocation(Request $request): RedirectResponse
     {
         $request->validate([
-            'location' => 'required',
+            'current_location' => 'required',
+            'location_name' => 'required',
+            'duration' => 'required|integer',
         ]);
 
-        //store in json file location
+        $this->fileCache->setCacheData($request);
 
-        return redirect()->route('home.unique.string')->with('success', 'Successfully saved the location.');
+        return redirect()->route('home.pinpoint.map')->with('success', 'Successfully saved the location.');
     }
 }

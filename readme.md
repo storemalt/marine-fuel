@@ -1,72 +1,113 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# MARINE FUEL EXAM
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+MARINE FUEL EXAM is a tech exam job application.
 
-## About Laravel
+### Required Technologies
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+APP NAME is currently running on the following technologies on a windows server. Instructions on how to use them in your own application are linked below.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Technology (Core) | Source |
+| ------ | ------ |
+| Laravelv5.8^ | [Laravel Framework v5.8^][laravel] |
+| PHPv7^ | [PHP v7+ Thread Safe][php] |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Techniques | Source |
+| ------ | ------ |
+| SOLID |
+| DRY |
+| KISS |
+| PseudoNoSQL | [Serialized Store Files][caching] |
 
-## Learning Laravel
+### Required Dependencies
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Technology | Source |
+| ------ | ------ |
+| Git | [Git bash for windows][git] |
+| Composer | [Composer setup exec for Windows][composer] |
+| PhpUnit | [Stable: v1.13.0 (Optional)][phpunit] |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1400 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Cloning the repository
+### Installation / Running the Program
+Download/Clone the Application from the git repository [https://github.com/aadriantech/marine-fuel.git]
+```sh
+git clone https://github.com/aadriantech/marine-fuel.git [folder_name]
+```
 
-## Laravel Sponsors
+Navigate to your application root
+```sh
+cd [directory][app_folder]
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Setup environment configuration file
+```sh
+cp .env.example .env
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
+Add google maps api key in environment configuration file 
+>*Note: https encrypted connection is required to connect to google maps api*
+> ensure that domain has SSL encryption
+```sh
+GOOGLE_MAPS_API_KEY:"whatever your api key is eg:foo"
+```
 
-## Contributing
+Update/install the PHP vendor dependencies via composer.
+make sure you have [composer] installed
+Open your terminal/command line and execute the following command
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```sh
+composer update
+```
 
-## Security Vulnerabilities
+Set an application key value
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```sh
+php artisan key:generate
+```
 
-## License
+### Folder Structure
+```sh
+app/Helpers - contains custom helpers for this project
+app/Http/Controllers - contains the business logic and controller base
+app/Interfaces - contains the Interface classes
+app/Mock - contains the mocker class for unit testing
+app - contains the solutions classes for this project
+resources - contains the static files
+test - contains the unit and feature tests
+storage - contains the various caching files including the pinpoint map cache
+routes - contains scripts for routing
+```
+### [Unit Testing]
+You can run the test by running the command (in linux distros)
+```sh
+phpunit
+```
+> in windows you might need to specify the php path
 
-The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Changelogs:
+> [2019/05/24] - Added a new readme
+> [2019/05/24] - Added new codebase
+
+
+[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
+
+   [laravel]: <https://laravel.com/>
+   [php]: <https://windows.php.net/download>
+   [caching]: <https://laravel.com/docs/5.8/cache#configuration>
+   [nginx]: <https://unit.nginx.org/installation/>
+   [phpfpm]: <https://php-fpm.org/>
+   [apache]: <https://www.apachelounge.com/download/>
+   [c++]: <https://aka.ms/vs/15/release/VC_redist.x64.exe>
+   [.net]: <https://dotnet.microsoft.com/download/dotnet-framework-runtime/net472>
+   [mysql]: <https://dev.mysql.com/downloads/windows/installer/8.0.html>
+   [install]: <https://www.youtube.com/watch?v=D5NjQlS-j80>
+   [install-nginx]: <https://www.youtube.com/watch?v=pGc8DbJVupE>
+   [git]: <https://git-scm.com/>
+   [composer]: <https://getcomposer.org/download/>
+   [node.js]: <https://nodejs.org/en/>
+   [make]: <https://sourceforge.net/projects/ezwinports/files/>
+   [phpunit]: <https://phpunit.de/>
+   [nodejs]: <https://nodejs.org/en/>
+   [yarn]: <https://yarnpkg.com/lang/en/docs/install/#windows-stable>
+   [cypress]: <https://www.cypress.io/>
+   [repo]: <https://bitbucket.org/storemalt/crmjtb-v2/src/master/>
+   [virtualhost]: <https://www.youtube.com/watch?v=3dUTbeUrlqE>
