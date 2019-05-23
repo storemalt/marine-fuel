@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="83308361-e5e0-4dda-a9c0-861249335b3c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/HomeController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/pinpoint-map.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/pinpoint-map.blade.php" afterDir="false" />
-    </list>
+    <list default="true" id="83308361-e5e0-4dda-a9c0-861249335b3c" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -411,12 +407,12 @@
       <workItem from="1558506111211" duration="1739000" />
       <workItem from="1558507965694" duration="1725000" />
       <workItem from="1558509788787" duration="1736000" />
-      <workItem from="1558511617658" duration="500000" />
+      <workItem from="1558511617658" duration="1084000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="66528000" />
+    <option name="totallyTimeSpent" value="67112000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
