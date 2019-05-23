@@ -133,23 +133,7 @@ class HomeController extends Controller
             'duration' => 'required|integer',
         ]);
 
-        if ($request->has('_token')) {
-            $data = json_decode($request->current_location, true);
-            $data['label'] = $request->location_name;
-            $expirationHours = intval($request->duration);
-            $data['expires'] = now()->addHours($expirationHours);
-
-            // temporarily saved in a file storage
-            if (Cache::has('locations')) {
-                $locations = $this->fileCache->getCacheArray();
-                array_push($locations, $data);
-                $this->fileCache->putCacheForever(json_encode($locations));
-
-            } else {
-                $locations[] = $data;
-                $this->fileCache->putCacheForever(json_encode($locations));
-            }
-        }
+        $this->fileCache->setCacheData($request);
 
         return redirect()->route('home.pinpoint.map')->with('success', 'Successfully saved the location.');
     }

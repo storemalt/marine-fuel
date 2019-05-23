@@ -72,16 +72,12 @@
     let locations = JSON.parse(storedLocations.value);
 
     function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 1.286268, lng: 103.7929168 },
+        zoom: 6,
+      });
+
       if (locations.length > 0) {
-        console.log(locations);
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: { lat: 1.286268, lng: 103.7929168 },
-          zoom: 6,
-        });
-
-        // Create an array of alphabetical characters used to label the markers.
-        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
         // Add some markers to the map.
         // Note: The code uses the JavaScript Array.prototype.map() method to
         // create an array of markers based on a given "locations" array.
@@ -89,44 +85,43 @@
         var markers = locations.map(function (location, i) {
           return new google.maps.Marker({
             position: location,
-//          label: labels[i % labels.length],
             label: location.label,
           });
         });
 
-        // Add a marker clusterer to manage the markers.
+        // Add a marker Cluster to manage the markers.
         var markerCluster = new MarkerClusterer(
           map,
           markers,
           { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' },
         );
+      }
 
-        infoWindow = new google.maps.InfoWindow;
+      infoWindow = new google.maps.InfoWindow;
 
-        // Try HTML5 geolocation.
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function (position) {
-            let pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            };
+      // Try HTML5 geolocation.
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          let pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
 
-            // save to hidden input current coordinates of request
-            const currentLocation = document.getElementById('current_location');
-            currentLocation.value = JSON.stringify(pos);
+          // save to hidden input current coordinates of request
+          const currentLocation = document.getElementById('current_location');
+          currentLocation.value = JSON.stringify(pos);
 
-            infoWindow.setPosition(pos);
-            infoWindow.setContent('Location found.');
-            infoWindow.open(map);
-            map.setCenter(pos);
-          }, function () {
-            handleLocationError(true, infoWindow, map.getCenter());
-          });
-        }
-        else {
-          // Browser doesn't support Geolocation
-          handleLocationError(false, infoWindow, map.getCenter());
-        }
+          infoWindow.setPosition(pos);
+          infoWindow.setContent('Location found.');
+          infoWindow.open(map);
+          map.setCenter(pos);
+        }, function () {
+          handleLocationError(true, infoWindow, map.getCenter());
+        });
+      }
+      else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindow, map.getCenter());
       }
 
       function handleLocationError(browserHasGeolocation, infoWindow, pos) {

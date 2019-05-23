@@ -3,12 +3,18 @@ declare(strict_types=1);
 
 namespace App;
 
-
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class FileCache
 {
+    /**
+     * Get cached locations as an array
+     *
+     * @param string $key
+     * @return array
+     */
     public function getCacheArray(string $key = 'locations'): array
     {
         $cacheData = Cache::get($key);
@@ -19,17 +25,49 @@ class FileCache
         return json_decode($cacheData);
     }
 
-    public function getCacheJson(string $key = 'locations'): string
+    /**
+     * Process locations data and saves in file cache
+     *
+     * @param Request $request
+     */
+    public function setCacheData(Request $request): void
     {
-        $cacheData = Cache::get($key);
-        return $cacheData;
+        if ($request->has('_token')) {
+            $data = json_decode($request->current_location, true);
+            $data['label'] = $request->location_name;
+            $expirationHours = intval($request->duration);
+            $data['expires'] = now()->addHours($expirationHours);
+
+            // temporarily saved in a file storage
+            if (Cache::has('locations')) {
+                $locations = $this->getCacheArray();
+                array_push($locations, $data);
+                $this->putCacheForever(json_encode($locations));
+
+            } else {
+                $locations[] = $data;
+                $this->putCacheForever(json_encode($locations));
+            }
+        }
     }
 
+    /**
+     * Stores cache with no expiration
+     *
+     * @param string $locations
+     * @param string $key
+     * @return bool
+     */
     public function putCacheForever(string $locations, string $key = 'locations')
     {
         return Cache::forever($key, $locations);
     }
 
+    /**
+     * Deletes expired data from locations cache
+     *
+     * @return string
+     */
     public function deleteExpiredCache(): string
     {
         $locations = $this->getCacheArray();
@@ -39,9 +77,7 @@ class FileCache
 
         $expiredData = array_filter($locations, function ($location) {
             $expiry = new Carbon($location->expires);
-            $now = Carbon::now()->addHours(1);
-            return $now->greaterThan($expiry);
-//            return $expiry->isPast();
+            return $expiry->isPast();
         });
 
         if (empty($expiredData)) {
@@ -51,38 +87,29 @@ class FileCache
         $expiredDataKeys = array_keys($expiredData);
         $flippedData = array_flip($expiredDataKeys);
         $availableLocations = array_diff_key($locations, $flippedData);
+        $locations = array_values($availableLocations);
 
-        $locationsData = [];
         if (!empty($availableLocations)) {
-            // @TODO: ADRIAN debug availableLocations
-            array_push($locationsData, $availableLocations);
+            $locations = array_values($availableLocations);
         }
 
-        $jsonLocationData = json_encode($locationsData);
+        $jsonLocations = json_encode($locations);
+        $this->putCacheForever($jsonLocations);
 
-        // @TODO: ADRIAN fix array has only objects [{}] not [1:{}] upon deletion of one value
-        // [
-            //  {"1":
-            //      {"lat":3.4130581,"lng":101.5918356,"label":"Ship B","expires":"2019-05-22T09:55:14.607930Z"}
-            //  }
-        //  ]
-        // vs [{"lat":3.3130581,"lng":101.5918356,"label":"Ship A","expires":"2019-05-22T08:55:01.614535Z"}]
-        $this->putCacheForever($jsonLocationData);
-
-        if (empty($jsonLocationData)) {
+        if (empty($locations)) {
             return $this->defaultLocations();
         }
 
-        return $jsonLocationData;
+        return $jsonLocations;
     }
 
+    /**
+     * Sets a default location data
+     *
+     * @return false|string
+     */
     public function defaultLocations()
     {
-        $locations[] = [
-            "lat" => 3.108864,
-            "lng" => 101.58735360000001,
-            "label" => "Ship 0"
-        ];
-        return json_encode($locations);
+        return json_encode([]);
     }
 }
