@@ -30,24 +30,31 @@ class FileCache
      *
      * @param Request $request
      * @param string $key
+     * @param bool $customExpiration
+     * @return bool
      */
-    public function setCacheData(Request $request, string $key = 'locations'): void
+    public function setCacheData(Request $request, string $key = 'locations', $customExpiration = false): bool
     {
         if ($request->has('_token')) {
             $data = json_decode($request->current_location, true);
             $data['label'] = $request->location_name;
             $expirationHours = intval($request->duration);
-            $data['expires'] = now()->addHours($expirationHours);
+
+            if (!$customExpiration) {
+                $data['expires'] = now()->addHours($expirationHours);
+            } else {
+                $data['expires'] = $customExpiration;
+            }
 
             // temporarily saved in a file storage
-            if (Cache::has('locations')) {
-                $locations = $this->getCacheArray();
+            if (Cache::has($key)) {
+                $locations = $this->getCacheArray($key);
                 array_push($locations, $data);
-                $this->putCacheForever(json_encode($locations), $key);
+                return $this->putCacheForever(json_encode($locations), $key);
 
             } else {
                 $locations[] = $data;
-                $this->putCacheForever(json_encode($locations), $key);
+                return $this->putCacheForever(json_encode($locations), $key);
             }
         }
     }
@@ -67,15 +74,17 @@ class FileCache
     /**
      * Deletes expired data from locations cache
      *
+     * @param string $key
      * @return string
      */
-    public function deleteExpiredCache(): string
+    public function deleteExpiredCache(string $key = 'locations'): string
     {
-        $locations = $this->getCacheArray();
+        $locations = $this->getCacheArray($key);
         if (empty($locations)) {
             return $this->defaultLocations();
         }
 
+        // extract expired data
         $expiredData = array_filter($locations, function ($location) {
             $expiry = new Carbon($location->expires);
             return $expiry->isPast();
@@ -87,19 +96,19 @@ class FileCache
 
         $expiredDataKeys = array_keys($expiredData);
         $flippedData = array_flip($expiredDataKeys);
+
+        // remove expired data
         $availableLocations = array_diff_key($locations, $flippedData);
-        $locations = array_values($availableLocations);
 
         if (!empty($availableLocations)) {
             $locations = array_values($availableLocations);
+        } else {
+            $locations = [];
         }
 
+        // save new locations data
         $jsonLocations = json_encode($locations);
         $this->putCacheForever($jsonLocations);
-
-        if (empty($locations)) {
-            return $this->defaultLocations();
-        }
 
         return $jsonLocations;
     }

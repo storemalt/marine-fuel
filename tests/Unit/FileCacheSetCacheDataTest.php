@@ -3,43 +3,59 @@
 namespace Tests\Unit;
 
 use App\FileCache;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use \Illuminate\Support\Facades\Cache;
+use App\Mocks\CacheDataMock;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class FileCacheSetCacheDataTest extends TestCase
 {
+    private $mock;
+
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $this->mock = new CacheDataMock();
+    }
+
     /**
-     * A basic unit test example.
+     * Checks if data is saved in cache
      *
      * @return void
      */
     public function testIfDataIsSavedInFileCache()
     {
-        $request = new Request();
-        $key = 'test';
-        $lat = 3.1560780999999998;
-        $lng = 101.7239218;
-        $label = 'Test Location Name';
-        $data = [
-            '_token' => 'asdfa098s7das54dfa98s6df9',
-            'current_location' => '{"lat":' . $lat . ',"lng":' . $lng . '}',
-            'location_name' => $label,
-            'duration' => 1,
-        ];
-
-        $request->merge($data);
         $fileCache = new FileCache();
-        $fileCache->setCacheData($request, $key);
-        $cache = $fileCache->getCacheArray($key)[0];
+        $request = $this->mock->generateData(
+            $this->mock->lat,
+            $this->mock->long,
+            $this->mock->label,
+            $this->mock->expires
+        );
+        $fileCache->setCacheData($request, $this->mock->key);
+        $cache = $fileCache->getCacheArray($this->mock->key)[0];
 
         $this->assertIsObject($cache);
-        $this->assertSame($cache->lat, $lat);
-        $this->assertSame($cache->lng, $lng);
-        $this->assertSame($cache->label, $label);
+        $this->assertSame($cache->lat, $this->mock->lat);
+        $this->assertSame($cache->lng, $this->mock->long);
+        $this->assertSame($cache->label, $this->mock->label);
         $this->assertTrue((bool)strtotime($cache->expires));
+    }
+
+    /**
+     * Checks if cache contains correct count of saved data
+     *
+     * @return void
+     */
+    public function testContainsCorrectCountOfSavedData()
+    {
+        $fileCache = new FileCache();
+        $request = $this->mock->generateData(
+            $this->mock->lat,
+            $this->mock->long,
+            $this->mock->label);
+        $fileCache->setCacheData($request, $this->mock->key);
+        $fileCache->setCacheData($request, $this->mock->key);
+        $cache = $fileCache->getCacheArray($this->mock->key);
+        $this->assertIsArray($cache);
+        $this->assertCount(2, $cache);
     }
 }

@@ -5,7 +5,7 @@
       <paths name="Homestead">
         <serverdata>
           <mappings>
-            <mapping deploy="/projects/marine-fuel-exam" local="$PROJECT_DIR$" web="/projects/marine-fuel-exam" />
+            <mapping deploy="/projects/marine-fuel" local="$PROJECT_DIR$" web="/projects/marine-fuel" />
           </mappings>
         </serverdata>
       </paths>
