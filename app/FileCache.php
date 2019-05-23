@@ -29,8 +29,9 @@ class FileCache
      * Process locations data and saves in file cache
      *
      * @param Request $request
+     * @param string $key
      */
-    public function setCacheData(Request $request): void
+    public function setCacheData(Request $request, string $key = 'locations'): void
     {
         if ($request->has('_token')) {
             $data = json_decode($request->current_location, true);
@@ -42,11 +43,11 @@ class FileCache
             if (Cache::has('locations')) {
                 $locations = $this->getCacheArray();
                 array_push($locations, $data);
-                $this->putCacheForever(json_encode($locations));
+                $this->putCacheForever(json_encode($locations), $key);
 
             } else {
                 $locations[] = $data;
-                $this->putCacheForever(json_encode($locations));
+                $this->putCacheForever(json_encode($locations), $key);
             }
         }
     }

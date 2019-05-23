@@ -15,8 +15,8 @@ class FileCacheDeleteExpiredCacheTest extends TestCase
      */
     public function testExample()
     {
-        $fileCache = new FileCache();
-        $fileCache->deleteExpiredCache();
-        $this->assertTrue(true);
+//        $fileCache = new FileCache();
+//        $fileCache->deleteExpiredCache();
+//        $this->assertTrue(true);
     }
 }

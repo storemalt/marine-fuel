@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="Homestead">
+    <serverData>
+      <paths name="Homestead">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/projects/marine-fuel-exam" local="$PROJECT_DIR$" web="/projects/marine-fuel-exam" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
